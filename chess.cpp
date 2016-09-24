@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
   Game *game = new Game();
 
-  game->printBoard();
+  game->run();
 
   return EXIT_SUCCESS;
 }
