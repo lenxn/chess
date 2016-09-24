@@ -36,7 +36,7 @@ class Game
       PAWN = 'P'
     };
     Game();
-
+    const void run();
     const void printBoard();
 
 };

@@ -11,6 +11,11 @@ Game::Game()
   initBoard();
 }
 
+const void Game::run()
+{
+    
+}
+
 const void Game::initBoard()
 {
   for(unsigned int row = 0; row < BOARD_DIMENSIONS; row++)
@@ -77,21 +82,24 @@ const void Game::initBoard()
 
 const void Game::printBoard()
 {
-  std::cout << "+---+---+---+---+---+---+---+---+" << std::endl;
-  for(unsigned int col = 0; col < BOARD_DIMENSIONS; col++)
+  unsigned int index = BOARD_DIMENSIONS;
+
+  std::cout << "     a   b   c   d   e   f   g   h  " << std::endl;
+  std::cout << "   +---+---+---+---+---+---+---+---+" << std::endl;
+  for(unsigned int row = 0; row < BOARD_DIMENSIONS; row++, index--)
   {
-    std::cout << FIELD_DELIMITER << ' ';
-    for(unsigned int row = 0; row < BOARD_DIMENSIONS; row++)
+    std::cout << ' ' << index << ' ' << FIELD_DELIMITER << ' ';
+    for(unsigned int col = 0; col < BOARD_DIMENSIONS; col++)
     {
-      if(board_[col][row].isOccupied())
+      if(board_[row][col].isOccupied())
       {
-        if(board_[col][row].getPiece()->isWhite())
+        if(board_[row][col].getPiece()->isWhite())
         {
-          std::cout << board_[col][row].getPiece()->getSymbol();
+          std::cout << board_[row][col].getPiece()->getSymbol();
         }
         else
         {
-          std::cout << START_BLACK_CMD_COLOR << board_[col][row].getPiece()->getSymbol() << END_BLACK_CMD_COLOR;
+          std::cout << START_BLACK_CMD_COLOR << board_[row][col].getPiece()->getSymbol() << END_BLACK_CMD_COLOR;
         }
       }
       else
@@ -100,7 +108,9 @@ const void Game::printBoard()
       }
       std::cout << ' ' << FIELD_DELIMITER << ' ';
     }
-    std::cout << std::endl << "+---+---+---+---+---+---+---+---+" << std::endl;
+    std::cout << ' ' << index << std::endl;
+    std::cout << "   +---+---+---+---+---+---+---+---+" << std::endl;
   } 
+  std::cout << "     a   b   c   d   e   f   g   h  " << std::endl;
 }
 
