@@ -9,3 +9,10 @@ King::King(const bool is_white)
   }
   symbol_ = Game::KING;
 }
+
+void King::getAccessibleFields(
+  Position initial_position,
+  Field board[BOARD_DIMENSIONS][BOARD_DIMENSIONS], 
+  bool access_map[BOARD_DIMENSIONS][BOARD_DIMENSIONS])
+{
+}

@@ -1,9 +1,10 @@
 #include <iostream>
-
-#include "Field.h"
+#include <vector>
 
 #ifndef GAME_H_INCLUDED
 #define GAME_H_INCLUDED
+
+#include "Field.h"
 
 class Game
 {
@@ -16,7 +17,9 @@ class Game
     static const char EMPTY_FIELD = ' ';
 
     static const char* EXIT_COMMAND;
+    static const char* START_WHITE_CMD_COLOR;
     static const char* START_BLACK_CMD_COLOR;
+    static const char* END_WHITE_CMD_COLOR;
     static const char* END_BLACK_CMD_COLOR;
 
     enum Pieces
@@ -29,16 +32,10 @@ class Game
       PAWN = 'P'
     };
 
-    typedef struct
-    {
-      unsigned int row;
-      unsigned int col;
-    } Position;
-
-
   private:
     bool checkmate_;
     bool white_in_charge_;
+    std::vector<std::string> history_;
     Field board_[BOARD_DIMENSIONS][BOARD_DIMENSIONS];
 
     const void initBoard();

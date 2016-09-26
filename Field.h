@@ -1,7 +1,11 @@
-#include "Piece.h"
-
 #ifndef FIELD_H_INCLUDED
 #define FIELD_H_INCLUDED
+
+
+
+#include "Piece.h"
+
+
 
 class Field
 {
@@ -13,7 +17,9 @@ class Field
     Field();
 
     Piece* getPiece();
+    const void setPiece(Piece*);
     const bool isOccupied();
+    const bool isAccessible(const bool player_is_white);
     void initPiece(const char type, const bool is_white);
 };
 

@@ -21,9 +21,36 @@ const bool Field::isOccupied()
   return occupied_;
 }
 
+const bool Field::isAccessible(bool player_is_white)
+{
+  bool accessible = true;
+  if(occupied_)
+  {
+    if((player_is_white && getPiece()->isWhite())
+      || (!player_is_white && !getPiece()->isWhite()))
+    {
+      accessible = false;
+    }
+  }
+  return accessible;
+}
+
 Piece* Field::getPiece()
 {
   return piece_;
+}
+
+const void Field::setPiece(Piece* piece_ptr)
+{
+  if(piece_ptr)
+  {
+    occupied_ = true;
+  }
+  else
+  {
+    occupied_ = false;
+  }
+  piece_ = piece_ptr;
 }
 
 void Field::initPiece(const char type, const bool is_white)

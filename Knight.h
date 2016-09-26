@@ -5,6 +5,13 @@
 
 class Knight : public Piece
 {
+  private:
+    virtual void getAccessibleFields(
+      Position, 
+      Field[BOARD_DIMENSIONS][BOARD_DIMENSIONS],
+      bool[BOARD_DIMENSIONS][BOARD_DIMENSIONS]
+    );
+  
   public:
     Knight(const bool is_white);
 };

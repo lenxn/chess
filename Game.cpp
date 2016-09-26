@@ -3,10 +3,14 @@
 #include <regex>
 
 #include "Game.h"
-#include "Field.h"
+#include "NoPieceException.h"
+#include "WrongPlayerException.h"
 
 const char* Game::EXIT_COMMAND = "exit";
+
+const char* Game::START_WHITE_CMD_COLOR = "\e[0;36m";
 const char* Game::START_BLACK_CMD_COLOR = "\e[0;35m";
+const char* Game::END_WHITE_CMD_COLOR = "\e[m";
 const char* Game::END_BLACK_CMD_COLOR = "\e[m";
 
 Game::Game()
@@ -31,7 +35,7 @@ const void Game::run()
     printBoard();
     if(white_in_charge_)
     {
-      std::cout << "Next move by White: ";
+      std::cout << "Next move by " << START_WHITE_CMD_COLOR << "White" << END_WHITE_CMD_COLOR << ": ";
     }
     else
     {
@@ -43,7 +47,6 @@ const void Game::run()
     {
       return;
     }
-
     
     if(std::regex_search(command, match, rgx))
     {
@@ -52,27 +55,38 @@ const void Game::run()
       dest.row = -1 * (int(match.str(2)[1] - '1') + 1) + BOARD_DIMENSIONS;
       dest.col = match.str(2)[0] - 'a';
 
-      movePiece(src, dest);
-      if(isCheckmate())
+      try
       {
-        checkmate_ = true;
+        movePiece(src, dest);
+        if(isCheckmate())
+        {
+          checkmate_ = true;
+          if(white_in_charge_)
+          {
+            std::cout << "White Player wins." << std::endl << "Gratulation!" << std::endl;
+          }
+          else
+          {
+            std::cout << "Black Player wins." << std::endl << "Gratulation!" << std::endl; 
+          }
+        }
+
         if(white_in_charge_)
         {
-          std::cout << "White Player wins." << std::endl << "Gratulation!" << std::endl;
+          white_in_charge_ = false;
         }
         else
         {
-          std::cout << "Black Player wins." << std::endl << "Gratulation!" << std::endl; 
+          white_in_charge_ = true;
         }
       }
-
-      if(white_in_charge_)
+      catch(NoPieceException)
       {
-        white_in_charge_ = false;
+        std::cout << "No piece found at source position." << std::endl;
       }
-      else
+      catch(WrongPlayerException)
       {
-        white_in_charge_ = true;
+        std::cout << "The piece at source position does not belong to the current Player." << std::endl;
       }
     }
     else
@@ -115,32 +129,38 @@ const void Game::initBoard()
       {
         board_[row][col].initPiece(PAWN, false);
       }
-      if(row == 6)
+      // if(row == 6)
+      // {
+      //   board_[row][col].initPiece(PAWN, true);
+      // }
+      // if(row == 7)
+      // {
+      //   if(col == 0 || col == 7)
+      //   {
+      //     board_[row][col].initPiece(ROCK, true);
+      //   }
+      //   if(col == 1 || col == 6)
+      //   {
+      //     board_[row][col].initPiece(KNIGHT, true);
+      //   }
+      //   if(col == 2 || col == 5)
+      //   {
+      //     board_[row][col].initPiece(BISHOP, true);
+      //   }
+      //   if(col == 3)
+      //   {
+      //     board_[row][col].initPiece(QUEEN, true);
+      //   }
+      //   if(col == 4)
+      //   {
+      //     board_[row][col].initPiece(KING, true);
+      //   }
+      // }
+
+      // DEBUGING
+      if(col == 4 && row == 4)
       {
-        board_[row][col].initPiece(PAWN, true);
-      }
-      if(row == 7)
-      {
-        if(col == 0 || col == 7)
-        {
-          board_[row][col].initPiece(ROCK, true);
-        }
-        if(col == 1 || col == 6)
-        {
-          board_[row][col].initPiece(KNIGHT, true);
-        }
-        if(col == 2 || col == 5)
-        {
-          board_[row][col].initPiece(BISHOP, true);
-        }
-        if(col == 3)
-        {
-          board_[row][col].initPiece(QUEEN, true);
-        }
-        if(col == 4)
-        {
-          board_[row][col].initPiece(KING, true);
-        }
+        board_[row][col].initPiece(ROCK, true);
       }
     }
   }
@@ -161,7 +181,7 @@ const void Game::printBoard()
       {
         if(board_[row][col].getPiece()->isWhite())
         {
-          std::cout << board_[row][col].getPiece()->getSymbol();
+          std::cout << START_WHITE_CMD_COLOR << board_[row][col].getPiece()->getSymbol() << END_WHITE_CMD_COLOR;
         }
         else
         {
@@ -182,7 +202,42 @@ const void Game::printBoard()
 
 const void Game::movePiece(Position src, Position dest)
 {
+  Field *src_field = &board_[src.row][src.col];
+  Field *dest_field = &board_[dest.row][dest.col];
 
+  if(src_field->isOccupied())
+  {
+    if((src_field->getPiece()->isWhite() && white_in_charge_) 
+      || (!src_field->getPiece()->isWhite() && !white_in_charge_))
+    {
+      if(!dest_field->isOccupied()
+        || (dest_field->getPiece()->isWhite() && !white_in_charge_) 
+        || (!dest_field->getPiece()->isWhite() && white_in_charge_))
+      {
+        if(src_field->getPiece()->moveIsPossible(board_, src, dest))
+        {
+          dest_field->setPiece(board_[src.row][src.col].getPiece());
+          src_field->setPiece(0);
+        }
+        else
+        {
+          // piece can't do this move
+        }
+      }
+      else
+      {
+        // exception: cannot take own piece
+      }
+    }
+    else
+    {
+      throw WrongPlayerException(); 
+    }
+  }
+  else
+  {
+    throw NoPieceException();
+  }
 }
 
 const bool Game::isCheckmate()

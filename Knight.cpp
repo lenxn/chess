@@ -9,3 +9,10 @@ Knight::Knight(const bool is_white)
   }
   symbol_ = Game::KNIGHT;
 }
+
+void Knight::getAccessibleFields(
+  Position initial_position,
+  Field board[BOARD_DIMENSIONS][BOARD_DIMENSIONS], 
+  bool access_map[BOARD_DIMENSIONS][BOARD_DIMENSIONS])
+{
+}
