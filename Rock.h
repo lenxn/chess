@@ -2,6 +2,7 @@
 #define ROCK_H_INCLUDED
 
 #include "Piece.h"
+#include "Game.h"
 
 class Rock : public Piece
 {
@@ -13,7 +14,15 @@ class Rock : public Piece
     );
 
   public:
-    Rock(const bool is_white);
+    //--------------------------------------------------------------------------
+    // Constants.
+    //
+    static const std::string UTF_SYMBOL;
+    
+    //--------------------------------------------------------------------------
+    // Constructor.
+    //
+    Rock(const bool is_white) : Piece(is_white, Game::ROCK) {}
 };
 
 #endif

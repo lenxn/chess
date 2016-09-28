@@ -17,6 +17,8 @@ class Game
     static const char EMPTY_FIELD = ' ';
 
     static const char* EXIT_COMMAND;
+    static const char* MOVEMENT_REGEX;
+
     static const char* START_WHITE_CMD_COLOR;
     static const char* START_BLACK_CMD_COLOR;
     static const char* END_WHITE_CMD_COLOR;

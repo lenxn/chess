@@ -2,6 +2,7 @@
 #define PIECE_H_INCLUDED
 
 #include <limits>
+#include <string>
 
 class Field;
 
@@ -19,8 +20,13 @@ class Piece
     //
     static const int BOARD_DIMENSIONS = 8;
 
+    //--------------------------------------------------------------------------
+    // Marks wether the pawn was already moved during this game.
+    //
+    bool initial_position_;
+
   	bool is_white_;
-    char symbol_;
+    std::string symbol_;
 
     //--------------------------------------------------------------------------
     // Get Straigt Accessible Fields.
@@ -46,6 +52,11 @@ class Piece
       unsigned int max_distance = std::numeric_limits<unsigned int>::max()
     );
 
+    //--------------------------------------------------------------------------
+    // Get Accessible Fields.
+    // Takes a boolean matrix of board dimensions and sets all elements which 
+    // are accessible by the respective piece from the respective position.
+    //
     virtual void getAccessibleFields(
       Position,
       Field[BOARD_DIMENSIONS][BOARD_DIMENSIONS],
@@ -54,9 +65,16 @@ class Piece
 
   public:
     Piece();
+    Piece(const bool, const char);
     const bool isWhite();
-    const char getSymbol();
+    const std::string getSymbol();
     const bool moveIsPossible(Field[BOARD_DIMENSIONS][BOARD_DIMENSIONS], Position, Position);
+
+    //--------------------------------------------------------------------------
+    // Mark as Moved.
+    // Some moves are no more possible after leaving the initial position.
+    //
+    void markAsMoved();
     
 };
 

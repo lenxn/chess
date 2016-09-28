@@ -2,6 +2,7 @@
 #define BISHOP_H_INCLUDED
 
 #include "Piece.h"
+#include "Game.h"
 
 class Bishop : public Piece
 {
@@ -13,7 +14,15 @@ class Bishop : public Piece
     );
     
   public:
-    Bishop(const bool is_white);
+    //--------------------------------------------------------------------------
+    // Constants.
+    //
+    static const std::string UTF_SYMBOL;
+
+    //--------------------------------------------------------------------------
+    // Constructor.
+    //
+    Bishop(const bool is_white) : Piece(is_white, Game::BISHOP) {}
 };
 
 #endif

@@ -5,8 +5,11 @@
 #include "Game.h"
 #include "NoPieceException.h"
 #include "WrongPlayerException.h"
+#include "CannotTakeOwnPieceException.h"
+#include "InvalidMoveException.h"
 
 const char* Game::EXIT_COMMAND = "exit";
+const char* Game::MOVEMENT_REGEX = ".?([a-h][1-8])-([a-h][1-8])";
 
 const char* Game::START_WHITE_CMD_COLOR = "\e[0;36m";
 const char* Game::START_BLACK_CMD_COLOR = "\e[0;35m";
@@ -26,7 +29,7 @@ const void Game::run()
   Position dest;
   std::string command;
   std::smatch match;
-  std::regex rgx(".?([a-e][1-8])-([a-h][1-8])");
+  std::regex rgx(MOVEMENT_REGEX);
     
 
   std::cout << "Starting new Game." << std::endl;
@@ -88,6 +91,14 @@ const void Game::run()
       {
         std::cout << "The piece at source position does not belong to the current Player." << std::endl;
       }
+      catch(CannotTakeOwnPieceException)
+      {
+        std::cout << "The piece at the destination field belongs to the current Player." << std::endl;
+      }
+      catch(InvalidMoveException)
+      {
+        std::cout << "Invalid Move for this piece" << std::endl;
+      }
     }
     else
     {
@@ -129,38 +140,32 @@ const void Game::initBoard()
       {
         board_[row][col].initPiece(PAWN, false);
       }
-      // if(row == 6)
-      // {
-      //   board_[row][col].initPiece(PAWN, true);
-      // }
-      // if(row == 7)
-      // {
-      //   if(col == 0 || col == 7)
-      //   {
-      //     board_[row][col].initPiece(ROCK, true);
-      //   }
-      //   if(col == 1 || col == 6)
-      //   {
-      //     board_[row][col].initPiece(KNIGHT, true);
-      //   }
-      //   if(col == 2 || col == 5)
-      //   {
-      //     board_[row][col].initPiece(BISHOP, true);
-      //   }
-      //   if(col == 3)
-      //   {
-      //     board_[row][col].initPiece(QUEEN, true);
-      //   }
-      //   if(col == 4)
-      //   {
-      //     board_[row][col].initPiece(KING, true);
-      //   }
-      // }
-
-      // DEBUGING
-      if(col == 4 && row == 4)
+      if(row == 6)
       {
-        board_[row][col].initPiece(ROCK, true);
+        board_[row][col].initPiece(PAWN, true);
+      }
+      if(row == 7)
+      {
+        if(col == 0 || col == 7)
+        {
+          board_[row][col].initPiece(ROCK, true);
+        }
+        if(col == 1 || col == 6)
+        {
+          board_[row][col].initPiece(KNIGHT, true);
+        }
+        if(col == 2 || col == 5)
+        {
+          board_[row][col].initPiece(BISHOP, true);
+        }
+        if(col == 3)
+        {
+          board_[row][col].initPiece(QUEEN, true);
+        }
+        if(col == 4)
+        {
+          board_[row][col].initPiece(KING, true);
+        }
       }
     }
   }
@@ -216,17 +221,18 @@ const void Game::movePiece(Position src, Position dest)
       {
         if(src_field->getPiece()->moveIsPossible(board_, src, dest))
         {
-          dest_field->setPiece(board_[src.row][src.col].getPiece());
+          dest_field->setPiece(src_field->getPiece());
+          dest_field->getPiece()->markAsMoved();
           src_field->setPiece(0);
         }
         else
         {
-          // piece can't do this move
+          throw InvalidMoveException();
         }
       }
       else
       {
-        // exception: cannot take own piece
+        throw CannotTakeOwnPieceException();
       }
     }
     else
